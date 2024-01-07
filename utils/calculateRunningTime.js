@@ -4,4 +4,4 @@ const calculateRunningTime = (startTime, currentTime) => {
   return `\nCurrent running time: ${sec} sec`;
 };
 
-module.exports = calculateRunningTime;
+module.exports = {calculateRunningTime};

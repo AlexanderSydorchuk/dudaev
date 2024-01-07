@@ -1,5 +1,5 @@
 {
-  "name": "ddos-bot",
+  "name": "dudaev",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,8 +9,12 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "LOX",
   "dependencies": {
-    "axios": "^0.26.0"
+    "axios": "^0.26.0",
+    "dotenv": "^16.3.1",
+    "fastify": "^4.25.2",
+    "node-fetch": "^3.3.2",
+    "pkg": "^5.8.1"
   }
 }
