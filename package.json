@@ -14,7 +14,8 @@
     "axios": "^0.26.0",
     "dotenv": "^16.3.1",
     "fastify": "^4.25.2",
-    "node-fetch": "^3.3.2",
-    "pkg": "^5.8.1"
+    "node-fetch": "^2.7.0",
+    "pkg": "^5.8.1",
+    "subworkers": "^1.0.1"
   }
 }
