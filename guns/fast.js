@@ -1,12 +1,8 @@
 require('dotenv').config();
 
 const fileHelper = require('../utils/fileHelper');
-const settingsManager = require('../managers/settingsManager');
 const {targetsPath} = require('../pathes');
-const http = require("http");
 const fetch = require('node-fetch');
-
-const killSwitch = require('../killSwitch');
 
 let targetStats = {};
 let queue = [];
@@ -33,26 +29,6 @@ async function fetchWithTimeout(resource, options) {
         clearTimeout(id);
         throw error;
     })
-}
-
-async function httpRequest(resource, options) {
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), options.timeout);
-
-    let opt = {
-        host: 'google.com',
-        method: 'GET',
-        mode: 'no-cors',
-        signal: controller.signal,
-    };
-
-    return http.request(opt, function(res)
-    {
-        res.setEncoding('utf8');
-        res.on('data', function (chunk) {
-            console.log("body: " + chunk);
-        });
-    });
 }
 
 async function flood(target) {
